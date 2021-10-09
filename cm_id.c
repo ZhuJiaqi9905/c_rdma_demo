@@ -132,7 +132,7 @@ int server_accept(struct rdma_conn *conn) {
     report_error(errno, "rdma_accept");
   }
   struct rdma_cm_event *event = await_cm_event(conn);
-  if (event != NULL || event->event != RDMA_CM_EVENT_ESTABLISHED) {
+  if (event == NULL || event->event != RDMA_CM_EVENT_ESTABLISHED) {
     ret = -1;
   }
   return ret;

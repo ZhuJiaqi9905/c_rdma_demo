@@ -94,10 +94,13 @@ int main() {
   if (server_bind(l_conn, server_ip, server_port) != 0) {
     goto out3;
   }
+  printf("binded\n");
   struct rdma_cm_event *event = await_cm_event(l_conn);
-  if (event != NULL || event->event != RDMA_CM_EVENT_CONNECT_REQUEST) {
+  if (event == NULL || event->event != RDMA_CM_EVENT_CONNECT_REQUEST) {
+    printf("event num: %d", event->event);
     goto out3;
   }
+  printf("receive connection request\n");
   // connect to the client and do operation
   if (connect_and_operate(event->id) != 0) {
     goto out3;
