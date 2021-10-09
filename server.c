@@ -61,7 +61,12 @@ static int connect_and_operate(struct rdma_cm_id *id) {
     }
     post_recv(conn, recv_buf, buf_len, 0);
   }
-
+  // disconnect
+  struct rdma_cm_event event;
+  ret = await_cm_event(conn, &event);
+  if (ret != 0 || event.event != RDMA_CM_EVENT_DISCONNECTED) {
+    ret = -1;
+  }
   ret = 0;
 out7:
   deregister_mr(conn);
@@ -102,14 +107,15 @@ int main() {
     goto out3;
   }
   printf("binded\n");
-  struct rdma_cm_event *event = await_cm_event(l_conn);
-  if (event == NULL || event->event != RDMA_CM_EVENT_CONNECT_REQUEST) {
-    printf("event num: %d", event->event);
+  struct rdma_cm_event event;
+  ret = await_cm_event(l_conn, &event);
+  if (ret != 0 || event.event != RDMA_CM_EVENT_CONNECT_REQUEST) {
+    printf("event num: %d", event.event);
     goto out3;
   }
   printf("receive connection request\n");
   // connect to the client and do operation
-  if (connect_and_operate(event->id) != 0) {
+  if (connect_and_operate(event.id) != 0) {
     goto out3;
   }
 

@@ -50,8 +50,9 @@ int client_bind(struct rdma_conn *conn, const char *server_ip,
     report_error(errno, "rdma_resolve_addr");
     goto out0;
   }
-  struct rdma_cm_event *event = await_cm_event(conn);
-  if (event == NULL || event->event != RDMA_CM_EVENT_ADDR_RESOLVED) {
+  struct rdma_cm_event event;
+  ret = await_cm_event(conn, &event);
+  if (ret != 0 || event.event != RDMA_CM_EVENT_ADDR_RESOLVED) {
     ret = -1;
     goto out0;
   }
@@ -61,8 +62,8 @@ int client_bind(struct rdma_conn *conn, const char *server_ip,
     report_error(errno, "rdma_resolve_route");
     goto out0;
   }
-  event = await_cm_event(conn);
-  if (event == NULL || event->event != RDMA_CM_EVENT_ROUTE_RESOLVED) {
+  ret = await_cm_event(conn, &event);
+  if (ret != 0 || event.event != RDMA_CM_EVENT_ROUTE_RESOLVED) {
     ret = -1;
   }
 out0:
@@ -115,8 +116,9 @@ int client_connect(struct rdma_conn *conn) {
   if (ret != 0) {
     report_error(errno, "rdma_connect");
   }
-  struct rdma_cm_event *event = await_cm_event(conn);
-  if (event == NULL || event->event != RDMA_CM_EVENT_ESTABLISHED) {
+  struct rdma_cm_event event;
+  ret = await_cm_event(conn, &event);
+  if (ret != 0 || event.event != RDMA_CM_EVENT_ESTABLISHED) {
     ret = -1;
   }
   return ret;
@@ -131,8 +133,9 @@ int server_accept(struct rdma_conn *conn) {
   if (ret != 0) {
     report_error(errno, "rdma_accept");
   }
-  struct rdma_cm_event *event = await_cm_event(conn);
-  if (event == NULL || event->event != RDMA_CM_EVENT_ESTABLISHED) {
+  struct rdma_cm_event event;
+  ret = await_cm_event(conn, &event);
+  if (ret != 0 || event.event != RDMA_CM_EVENT_ESTABLISHED) {
     ret = -1;
   }
   return ret;
@@ -145,8 +148,9 @@ int client_disconnect(struct rdma_conn *conn) {
   if (ret != 0) {
     report_error(errno, "rdma_disconnect");
   }
-  struct rdma_cm_event *event = await_cm_event(conn);
-  if (event == NULL || event->event != RDMA_CM_EVENT_DISCONNECTED) {
+  struct rdma_cm_event event;
+  ret = await_cm_event(conn, &event);
+  if (ret != 0 || event.event != RDMA_CM_EVENT_DISCONNECTED) {
     ret = -1;
   }
   return ret;

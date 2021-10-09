@@ -22,7 +22,7 @@ void destroy_rdma_conn(struct rdma_conn *conn);
 // event channel
 int create_event_channel(struct rdma_conn *conn);
 void destroy_event_channel(struct rdma_conn *conn);
-struct rdma_cm_event *await_cm_event(struct rdma_conn *conn);
+int await_cm_event(struct rdma_conn *conn, struct rdma_cm_event *event_copy);
 
 // cm_id
 int create_cm_id(struct rdma_conn *conn);
