@@ -23,7 +23,7 @@ out0:
   return ret;
 }
 
-int destroy_id(struct rdma_conn *conn) {
+int destroy_cm_id(struct rdma_conn *conn) {
   int ret;
   ret = rdma_destroy_id(conn->cm_id);
   if (ret != 0) {
@@ -34,16 +34,18 @@ int destroy_id(struct rdma_conn *conn) {
 
 int client_bind(struct rdma_conn *conn, const char *server_ip,
                 const char *server_port) {
+  int ret = -1;
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;
   addr.sin_port = htons((uint64_t)atoi(server_port));
   if (inet_pton(AF_INET, server_ip, &addr.sin_addr) != 1) {
     report_error(errno, "inet_pton");
+    ret = 0;
     goto out0;
   }
-  int ret = 0;
-  ret =
-      rdma_resolve_addr(conn->cm_id, NULL, (struct sockaddr *)&addr, TIMEOUT_MS);
+
+  ret = rdma_resolve_addr(conn->cm_id, NULL, (struct sockaddr *)&addr,
+                          TIMEOUT_MS);
   if (ret != 0) {
     report_error(errno, "rdma_resolve_addr");
     goto out0;
@@ -69,14 +71,15 @@ out0:
 
 int server_bind(struct rdma_conn *conn, const char *server_ip,
                 const char *server_port) {
+  int ret = 0;
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;
   addr.sin_port = htons((uint64_t)atoi(server_port));
   if (inet_pton(AF_INET, server_ip, &addr.sin_addr) != 1) {
     report_error(errno, "inet_pton");
+    ret = -1;
     goto out0;
   }
-  int ret = 0;
   ret = rdma_bind_addr(conn->cm_id, (struct sockaddr *)&addr);
   if (ret != 0) {
     report_error(errno, "rdma_bind_addr");

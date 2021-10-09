@@ -73,7 +73,7 @@ out1:
 out0:
   free(send_buf);
   free(recv_buf);
-  return 0;
+  return ret;
 }
 int main() {
   int ret = EXIT_FAILURE;

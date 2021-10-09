@@ -23,4 +23,4 @@ int create_qp(struct rdma_conn *conn, int sq_sig_all, uint32_t max_send_wr,
   return ret;
 }
 
-int destroy_qp(struct rdma_conn *conn) { rdma_destroy_qp(conn->cm_id); }
+void destroy_qp(struct rdma_conn *conn) { rdma_destroy_qp(conn->cm_id); }

@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -O -g
-LDFLAGS = -lrt -lrdmacm
+LDLIBS := ${LDLIBS} -lrdmacm -libverbs
 
 EXECUTABLES = client server
 

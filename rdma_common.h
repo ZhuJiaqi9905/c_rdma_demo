@@ -53,7 +53,7 @@ int deregister_mr(struct rdma_conn *conn);
 int create_qp(struct rdma_conn *conn, int sq_sig_all, uint32_t max_send_wr,
               uint32_t max_recv_wr, uint32_t max_send_sge,
               uint32_t max_recv_sge);
-int destroy_qp(struct rdma_conn *conn);
+void destroy_qp(struct rdma_conn *conn);
 // send_recv
 int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
               uint64_t wr_id);
