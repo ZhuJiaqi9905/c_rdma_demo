@@ -16,18 +16,23 @@ static int connect_and_operate(struct rdma_cm_id *id) {
   if (create_event_channel(conn) != 0) {
     goto out1;
   }
+  printf("create_event_channel\n");
   if (migrate_cm_id(conn, id) != 0) {
     goto out2;
   }
+  printf("migrate_cm_id\n");
   if (alloc_pd(conn) != 0) {
     goto out3;
   }
+  printf("alloc pd\n");
   if (create_cq(conn, cqe) != 0) {
     goto out4;
   }
+  printf("create cq\n");
   if (create_qp(conn, 0, 10, 10, 1, 1) != 0) {
     goto out5;
   }
+  printf("create qp\n");
   if (register_mr(conn, (void *)send_buf, buf_len,
                   IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_READ |
                       IBV_ACCESS_REMOTE_WRITE,
@@ -36,12 +41,14 @@ static int connect_and_operate(struct rdma_cm_id *id) {
                       IBV_ACCESS_REMOTE_WRITE) != 0) {
     goto out6;
   }
+  printf("register mr\n");
   for (int i = 0; i < cqe; ++i) {
     post_recv(conn, recv_buf, buf_len, 0);
   }
   if (server_accept(conn) != 0) {
     goto out7;
   }
+  printf("accept\n");
   // connected
   printf("connected");
   struct ibv_wc wc;
@@ -77,7 +84,7 @@ out0:
 }
 int main() {
   int ret = EXIT_FAILURE;
-  char server_ip[] = "10.0.12.24";
+  char server_ip[] = "10.0.12.25";
   char server_port[] = "7900";
   struct rdma_conn *l_conn = create_rdma_conn();
   if (l_conn == NULL) {

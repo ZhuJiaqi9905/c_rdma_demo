@@ -152,5 +152,6 @@ int client_disconnect(struct rdma_conn *conn) {
   return ret;
 }
 void report_error(int err, const char *verb_name) {
-  fprintf(stderr, "error: %s. errno: %d.", verb_name, err);
+  // fprintf(stderr, "error: %s. errno: %d.", verb_name, err);
+  printf("error: %s. errno: %d.", verb_name, err);
 }

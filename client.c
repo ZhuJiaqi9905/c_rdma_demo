@@ -4,7 +4,7 @@
 int main() {
   int num = 2000;
   int ret = EXIT_FAILURE;
-  char server_ip[] = "10.0.12.24";
+  char server_ip[] = "10.0.12.25";
   char server_port[] = "7900";
   int cqe = 10;
   int buf_len = 65536;
