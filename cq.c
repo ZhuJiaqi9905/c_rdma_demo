@@ -2,7 +2,7 @@
 
 int create_cq(struct rdma_conn *conn, int cqe) {
   int ret = 0;
-  conn->cq = ibv_create_cq(conn->cm_id->verbs, cqe, conn, NULL, 0);
+  conn->cq = ibv_create_cq(conn->cm_id->verbs, cqe, NULL, NULL, 0);
   if (conn->cq == NULL) {
     report_error(errno, "ibv_create_cq");
     ret = -1;

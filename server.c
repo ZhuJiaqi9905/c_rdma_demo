@@ -8,6 +8,10 @@ static int connect_and_operate(struct rdma_cm_id *id) {
   int buf_len = 65536;
   uint8_t *send_buf = (uint8_t *)malloc(buf_len);
   uint8_t *recv_buf = (uint8_t *)malloc(buf_len);
+  for (int i = 0; i < buf_len; ++i) {
+    send_buf[i] = 1;
+    recv_buf[i] = 1;
+  }
   int ret = -1;
   struct rdma_conn *conn = create_rdma_conn();
   if (conn == NULL) {
@@ -42,8 +46,8 @@ static int connect_and_operate(struct rdma_cm_id *id) {
     goto out6;
   }
   printf("register mr\n");
-  for (int i = 0; i < cqe; ++i) {
-    post_recv(conn, recv_buf, buf_len, 0);
+  for (int i = 0; i < 1; ++i) {
+    post_recv(conn, recv_buf, 200, 0);
   }
   if (server_accept(conn) != 0) {
     goto out7;
@@ -51,22 +55,24 @@ static int connect_and_operate(struct rdma_cm_id *id) {
   printf("accept\n");
   // connected
   printf("connected");
+
   struct ibv_wc wc;
-  for (int i = 0; i < num; ++i) {
-    if (await_completion(conn, &wc) != 1) {
-      goto out7;
-    }
-    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_RECV) {
-      goto out7;
-    }
-    post_recv(conn, recv_buf, buf_len, 0);
-  }
+  // for (int i = 0; i < num; ++i) {
+  //   if (await_completion(conn, &wc) != 1) {
+  //     goto out7;
+  //   }
+  //   if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_RECV) {
+  //     goto out7;
+  //   }
+  //   post_recv(conn, recv_buf, buf_len, 0);
+  // }
   // disconnect
   struct rdma_cm_event event;
   ret = await_cm_event(conn, &event);
   if (ret != 0 || event.event != RDMA_CM_EVENT_DISCONNECTED) {
-    ret = -1;
+    goto out7;
   }
+  printf("disconnect\n");
   ret = 0;
 out7:
   deregister_mr(conn);

@@ -5,7 +5,7 @@ int create_qp(struct rdma_conn *conn, int sq_sig_all, uint32_t max_send_wr,
   struct ibv_qp_init_attr init_attr;
   int ret;
   memset(&init_attr, 0, sizeof(struct ibv_qp_init_attr));
-  init_attr.qp_context = (void *)conn;
+  // init_attr.qp_context = (void *)conn;
   init_attr.send_cq = conn->cq;
   init_attr.recv_cq = conn->cq;
   init_attr.srq = NULL;
