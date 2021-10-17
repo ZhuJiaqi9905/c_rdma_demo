@@ -1,6 +1,7 @@
 #include "rdma_common.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 int main() {
   int num = 2000;
   int ret = EXIT_FAILURE;
@@ -55,17 +56,28 @@ int main() {
   printf("connected\n");
 
   struct ibv_wc wc;
-  // for (int i = 0; i < 1; ++i) {
-  //   if (post_send(conn, send_buf, buf_len, 0) != 0) {
-  //     goto out7;
-  //   }
-  //   if (await_completion(conn, &wc) != 1) {
-  //     goto out7;
-  //   }
-  //   if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_SEND) {
-  //     goto out7;
-  //   }
-  // }
+  struct timeval t_start;
+  struct timeval t_end;
+  struct timeval t_result;
+  gettimeofday(&t_start, NULL);
+  for (int i = 0; i < num; ++i) {
+    if (post_send(conn, send_buf, buf_len, 0) != 0) {
+      goto out7;
+    }
+    if (await_completion(conn, &wc) != 1) {
+      goto out7;
+    }
+    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_SEND) {
+      goto out7;
+    }
+  }
+  gettimeofday(&t_end, NULL);
+  timersub(&t_end, &t_start, &t_result);
+  double duration = t_result.tv_sec + (1.0 * t_result.tv_usec) / 1000000;
+  double size = 1.0 * num * buf_len / (1024 * 1024);
+  double throughput = size / duration;
+  printf("duration: %lfs, size: %lfMB, throuthput: %lfMB/s", duration, size,
+         throughput);
   // disconnected
   if (client_disconnect(conn) != 0) {
     goto out7;
