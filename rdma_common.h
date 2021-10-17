@@ -2,6 +2,7 @@
 #define C_RDMA_DEMO_RDMA_COMMON_H
 #include <rdma/rdma_cma.h>
 #include <stdint.h>
+#include <rdma/rdma_verbs.h>
 #define MAX_WORK_REQUESTS 1
 #define MAX_BACKLOG 10
 #define TIMEOUT_MS 2000
@@ -11,9 +12,6 @@ struct rdma_conn {
   struct ibv_pd *pd;
   struct ibv_cq *cq;
   struct ibv_qp *qp;
-  struct ibv_sge sge;
-  struct ibv_send_wr send_wr;
-  struct ibv_recv_wr recv_wr;
   struct ibv_mr *mr_send;
   struct ibv_mr *mr_recv;
   uint32_t remote_rkey;
