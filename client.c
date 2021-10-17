@@ -18,21 +18,27 @@ int main() {
   if (create_event_channel(conn) != 0) {
     goto out1;
   }
+  printf("event_channel created\n");
   if (create_cm_id(conn) != 0) {
     goto out2;
   }
+  printf("cm_id created\n");
   if (client_bind(conn, server_ip, server_port) != 0) {
     goto out3;
   }
+  printf("binded\n");
   if (alloc_pd(conn) != 0) {
     goto out3;
   }
+  printf("alloc pd\n");
   if (create_cq(conn, cqe) != 0) {
     goto out4;
   }
+  printf("cq created\n");
   if (create_qp(conn, 0, 10, 10, 1, 1) != 0) {
     goto out5;
   }
+  printf("qp created\n");
   if (register_mr(conn, (void *)send_buf, buf_len,
                   IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_READ |
                       IBV_ACCESS_REMOTE_WRITE,
@@ -41,6 +47,7 @@ int main() {
                       IBV_ACCESS_REMOTE_WRITE) != 0) {
     goto out6;
   }
+  printf("mr registered\n");
   if (client_connect(conn) != 0) {
     goto out7;
   }
@@ -48,21 +55,22 @@ int main() {
   printf("connected\n");
 
   struct ibv_wc wc;
-  for (int i = 0; i < num; ++i) {
-    if (post_send(conn, send_buf, buf_len, 0) != 0) {
-      goto out7;
-    }
-    if (await_completion(conn, &wc) != 1) {
-      goto out7;
-    }
-    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_SEND) {
-      goto out7;
-    }
-  }
+  // for (int i = 0; i < 1; ++i) {
+  //   if (post_send(conn, send_buf, buf_len, 0) != 0) {
+  //     goto out7;
+  //   }
+  //   if (await_completion(conn, &wc) != 1) {
+  //     goto out7;
+  //   }
+  //   if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_SEND) {
+  //     goto out7;
+  //   }
+  // }
   // disconnected
   if (client_disconnect(conn) != 0) {
     goto out7;
   }
+  printf("disconnect\n");
   ret = EXIT_SUCCESS;
 out7:
   deregister_mr(conn);
