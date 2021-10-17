@@ -11,7 +11,6 @@ int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
   struct ibv_send_wr *bad_wr;
 
   memset(&wr, 0, sizeof(wr));
-  struct ibv_send_wr *bad_wr;
   int ret;
   
   wr.wr_id = wr_id;
