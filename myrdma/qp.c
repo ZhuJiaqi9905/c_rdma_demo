@@ -1,4 +1,5 @@
-#include "rdma_common.h"
+#include "qp.h"
+#include <rdma/rdma_verbs.h>
 int create_qp(struct rdma_conn *conn, int sq_sig_all, uint32_t max_send_wr,
               uint32_t max_recv_wr, uint32_t max_send_sge,
               uint32_t max_recv_sge) {

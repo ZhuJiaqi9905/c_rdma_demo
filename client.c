@@ -1,9 +1,9 @@
-#include "rdma_common.h"
+#include "include/rdma_common.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 int main() {
-  int num = 2000;
+  int num = 1000;
   int ret = EXIT_FAILURE;
   char server_ip[] = "10.0.12.25";
   char server_port[] = "7900";
@@ -76,7 +76,7 @@ int main() {
   double duration = t_result.tv_sec + (1.0 * t_result.tv_usec) / 1000000;
   double size = 1.0 * num * buf_len / (1024 * 1024);
   double throughput = size / duration;
-  printf("duration: %lfs, size: %lfMB, throuthput: %lfMB/s", duration, size,
+  printf("duration: %lfs, size: %lfMB, throuthput: %lfMB/s\n", duration, size,
          throughput);
   // disconnected
   if (client_disconnect(conn) != 0) {

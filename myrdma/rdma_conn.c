@@ -1,4 +1,5 @@
-#include "rdma_common.h"
+#include "rdma_conn.h"
+#include <rdma/rdma_verbs.h>
 #include <ctype.h>
 #include <errno.h>
 #include <infiniband/arch.h>

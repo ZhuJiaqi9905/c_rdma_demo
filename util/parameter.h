@@ -1,0 +1,6 @@
+#ifndef UTIL_PARAMETER_H
+#define UTIL_PARAMETER_H
+#define MAX_WORK_REQUESTS 1
+#define MAX_BACKLOG 10
+#define TIMEOUT_MS 2000
+#endif

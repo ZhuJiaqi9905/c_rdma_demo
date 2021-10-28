@@ -1,5 +1,5 @@
-#include "rdma_common.h"
-
+#include "mr.h"
+#include <rdma/rdma_verbs.h>
 int register_mr(struct rdma_conn *conn, void *addr_send, size_t length_send,
                 enum ibv_access_flags access_send, void *addr_recv,
                 size_t length_recv, enum ibv_access_flags access_recv) {

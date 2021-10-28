@@ -1,4 +1,6 @@
-#include "rdma_common.h"
+#include "cm_id.h"
+
+#include <rdma/rdma_verbs.h>
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>

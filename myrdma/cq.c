@@ -1,5 +1,5 @@
-#include "rdma_common.h"
-
+#include <rdma/rdma_verbs.h>
+#include "cq.h"
 int create_cq(struct rdma_conn *conn, int cqe) {
   int ret = 0;
   conn->cq = ibv_create_cq(conn->cm_id->verbs, cqe, NULL, NULL, 0);

@@ -1,4 +1,5 @@
-#include "rdma_common.h"
+#include "send_recv.h"
+#include <rdma/rdma_verbs.h>
 #include <infiniband/verbs.h>
 int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
               uint64_t wr_id) {

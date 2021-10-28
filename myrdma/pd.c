@@ -1,5 +1,5 @@
-#include "rdma_common.h"
-
+#include "pd.h"
+#include <rdma/rdma_verbs.h>
 int alloc_pd(struct rdma_conn *conn) {
   int ret = 0;
   conn->pd = ibv_alloc_pd(conn->cm_id->verbs);

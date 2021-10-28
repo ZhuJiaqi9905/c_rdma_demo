@@ -3,6 +3,15 @@
 #include <rdma/rdma_cma.h>
 #include <stdint.h>
 #include <rdma/rdma_verbs.h>
+// #include "../myrdma/rdma_conn.h"
+// #include "../myrdma/cm_id.h"
+// #include "../myrdma/cq.h"
+// #include "../myrdma/event_channel.h"
+// #include "../myrdma/mr.h"
+// #include "../myrdma/pd.h"
+// #include "../myrdma/qp.h"
+// #include "../myrdma/send_recv.h"
+
 #define MAX_WORK_REQUESTS 1
 #define MAX_BACKLOG 10
 #define TIMEOUT_MS 2000
@@ -18,6 +27,7 @@ struct rdma_conn {
 };
 struct rdma_conn *create_rdma_conn();
 void destroy_rdma_conn(struct rdma_conn *conn);
+
 
 // event channel
 int create_event_channel(struct rdma_conn *conn);
