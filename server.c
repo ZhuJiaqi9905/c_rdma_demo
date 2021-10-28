@@ -81,7 +81,7 @@ static int connect_and_operate(struct rdma_cm_id *id) {
   double duration = t_result.tv_sec + (1.0 * t_result.tv_usec) / 1000000;
   double size = 1.0 * num * buf_len / (1024 * 1024);
   double throughput = size / duration;
-  printf("duration: %lfs, size: %lfMB, throuthput: %lfMB/s", duration, size,
+  printf("duration: %lfs, size: %lfMB, throuthput: %lfMB/s\n", duration, size,
          throughput);
   // disconnect
   struct rdma_cm_event event;
