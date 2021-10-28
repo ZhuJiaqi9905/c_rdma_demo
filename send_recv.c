@@ -21,7 +21,7 @@ int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
   wr.send_flags = IBV_SEND_SIGNALED;
   ret = ibv_post_send(conn->qp, &wr, &bad_wr);
   if (ret != 0) {
-    report_error(errno, "ibv_post_send");
+    report_error(errno, "ibv_post_send(); post_send");
   }
   return ret;
 }
@@ -41,7 +41,7 @@ int post_recv(struct rdma_conn *conn, void *addr, uint32_t length,
   wr.num_sge = 1;
   int ret = ibv_post_recv(conn->qp, &wr, &bad);
   if (ret != 0) {
-    report_error(errno, "ibv_post_recv");
+    report_error(errno, "ibv_post_recv(); post_recv");
   }
   return ret;
 }

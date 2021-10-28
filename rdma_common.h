@@ -1,8 +1,8 @@
 #ifndef C_RDMA_DEMO_RDMA_COMMON_H
 #define C_RDMA_DEMO_RDMA_COMMON_H
 #include <rdma/rdma_cma.h>
-#include <stdint.h>
 #include <rdma/rdma_verbs.h>
+#include <stdint.h>
 #define MAX_WORK_REQUESTS 1
 #define MAX_BACKLOG 10
 #define TIMEOUT_MS 2000
@@ -15,6 +15,10 @@ struct rdma_conn {
   struct ibv_mr *mr_send;
   struct ibv_mr *mr_recv;
   uint32_t remote_rkey;
+  void *send_buf;
+  void *recv_buf;
+  uint32_t send_len;
+  uint32_t recv_len;
 };
 struct rdma_conn *create_rdma_conn();
 void destroy_rdma_conn(struct rdma_conn *conn);
@@ -35,6 +39,8 @@ int server_bind(struct rdma_conn *conn, const char *server_ip,
 int client_connect(struct rdma_conn *conn);
 int server_accept(struct rdma_conn *conn);
 int client_disconnect(struct rdma_conn *conn);
+void report_error(int err, const char *verb_name);
+int exchange_rkey(struct rdma_conn *conn);
 // cq
 int create_cq(struct rdma_conn *conn, int cqe);
 int destroy_cq(struct rdma_conn *conn);
@@ -59,5 +65,9 @@ int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
               uint64_t wr_id);
 int post_recv(struct rdma_conn *conn, void *addr, uint32_t length,
               uint64_t wr_id);
-void report_error(int err, const char *verb_name);
+int post_read(struct rdma_conn *conn, void *addr, uint32_t length,
+              void *remote_addr, uint64_t wr_id);
+int post_write(struct rdma_conn *conn, void *addr, uint32_t length,
+               void *remote_addr, uint64_t wr_id);
+
 #endif

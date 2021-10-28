@@ -48,13 +48,16 @@ int main() {
                       IBV_ACCESS_REMOTE_WRITE) != 0) {
     goto out6;
   }
+  // printf("send_buf: %p, mr_addr: %p\n", send_buf, conn->mr_send->addr);
   printf("mr registered\n");
   if (client_connect(conn) != 0) {
     goto out7;
   }
   // connected
   printf("connected\n");
-
+  printf("my rkey is %d\n", conn->mr_recv->rkey);
+  exchange_rkey(conn);
+  printf("received rkey is %d\n", conn->remote_rkey);
   struct ibv_wc wc;
   struct timeval t_start;
   struct timeval t_end;

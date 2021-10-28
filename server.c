@@ -56,7 +56,9 @@ static int connect_and_operate(struct rdma_cm_id *id) {
   printf("accept\n");
   // connected
   printf("connected");
-
+  printf("my rkey is %d\n", conn->mr_recv->rkey);
+  exchange_rkey(conn);
+  printf("received rkey is %d\n", conn->remote_rkey);
   struct ibv_wc wc;
   struct timeval t_start;
   struct timeval t_end;

@@ -10,11 +10,15 @@ int register_mr(struct rdma_conn *conn, void *addr_send, size_t length_send,
     ret = -1;
     goto out0;
   }
+  conn->send_buf = addr_send;
+  conn->send_len = length_send;
   conn->mr_recv = ibv_reg_mr(conn->pd, addr_recv, length_recv, access_recv);
   if (conn->mr_recv == NULL) {
     report_error(errno, "ibv_register_mr_recv");
     ret = -1;
   }
+  conn->recv_buf = addr_recv;
+  conn->send_len = length_recv;
 out0:
   return ret;
 }
