@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 int main() {
-  int num = 2000;
+  int num = 20;
   int ret = EXIT_FAILURE;
   char server_ip[] = "10.0.12.25";
   char server_port[] = "7900";
@@ -64,7 +64,8 @@ int main() {
   struct timeval t_result;
   gettimeofday(&t_start, NULL);
   for (int i = 0; i < num; ++i) {
-    if (post_send(conn, send_buf, buf_len, 0) != 0) {
+    printf("post_send %d\n", i);
+    if (post_send(conn, send_buf, buf_len, conn->mr_send->lkey, 0) != 0) {
       goto out7;
     }
     if (await_completion(conn, &wc) != 1) {

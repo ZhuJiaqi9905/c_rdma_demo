@@ -15,8 +15,8 @@ struct rdma_conn {
   struct ibv_mr *mr_send;
   struct ibv_mr *mr_recv;
   uint32_t remote_rkey;
-  void *send_buf;
-  void *recv_buf;
+  uint8_t *send_buf;
+  uint8_t *recv_buf;
   uint32_t send_len;
   uint32_t recv_len;
 };
