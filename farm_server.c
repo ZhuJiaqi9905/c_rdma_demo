@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
+
+#include <stdio.h>
 static int connect_and_operate(struct rdma_cm_id *id) {
   int num = 20;
   int cqe = 10;
@@ -57,12 +59,15 @@ static int connect_and_operate(struct rdma_cm_id *id) {
   gettimeofday(&t_start, NULL);
 
   int rlen = 0;
+  int i = 0;
   while (1) {
     rlen = 0;
     while (rlen == 0) {
       rlen = farm_read(recver, buf, buf_len);
+      // asm("nop");
+      usleep(1);
     }
-    printf("read %d bytes", rlen);
+    printf("read %d bytes\n", rlen);
   }
   gettimeofday(&t_end, NULL);
   timersub(&t_end, &t_start, &t_result);

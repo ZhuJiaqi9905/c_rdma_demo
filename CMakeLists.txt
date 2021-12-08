@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.5)
 project(c_rdma C)
 set(CMAKE_C_STANDARD 11)
 set(MY_TEST OFF)
