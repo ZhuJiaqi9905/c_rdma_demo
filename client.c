@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 int main() {
-  int num = 2000;
+  int num = 20;
   int ret = EXIT_FAILURE;
   char server_ip[] = "10.0.12.25";
   char server_port[] = "7900";

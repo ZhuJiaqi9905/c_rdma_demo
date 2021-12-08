@@ -9,7 +9,7 @@ int post_read(struct rdma_conn *conn, void *addr, uint32_t length,
 
   sg.addr = (uint64_t)addr;
   sg.length = length;
-  sg.lkey = conn->mr_recv->lkey;
+  sg.lkey = lkey;
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 0;
   wr.sg_list = &sg;
@@ -17,7 +17,7 @@ int post_read(struct rdma_conn *conn, void *addr, uint32_t length,
   wr.opcode = IBV_WR_RDMA_READ;
   wr.send_flags = IBV_SEND_SIGNALED;
   wr.wr.rdma.remote_addr = remote_addr;
-  wr.wr.rdma.rkey = conn->remote_rkey;
+  wr.wr.rdma.rkey = remote_rkey;
   int ret = ibv_post_send(qp, &wr, &bad_wr);
   if (ret) {
     report_error(errno, "ibv_post_send(); post_read");
