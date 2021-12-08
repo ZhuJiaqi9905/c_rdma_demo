@@ -1,4 +1,4 @@
-#include "rdma_common.h"
+#include "rdma_conn.h"
 #include <infiniband/verbs.h>
 
 int post_read(struct rdma_conn *conn, void *addr, uint32_t length,
@@ -9,7 +9,7 @@ int post_read(struct rdma_conn *conn, void *addr, uint32_t length,
 
   sg.addr = (uint64_t)addr;
   sg.length = length;
-  sg.lkey = conn->mr_send->lkey;
+  sg.lkey = conn->mr->lkey;
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 0;
   wr.sg_list = &sg;
@@ -32,7 +32,7 @@ int post_write(struct rdma_conn *conn, void *addr, uint32_t length,
 
   sg.addr = (uint64_t)addr;
   sg.length = length;
-  sg.lkey = conn->mr_send->lkey;
+  sg.lkey = conn->mr->lkey;
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 0;
   wr.sg_list = &sg;

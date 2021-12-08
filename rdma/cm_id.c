@@ -1,4 +1,4 @@
-#include "rdma_common.h"
+#include "rdma_conn.h"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -160,36 +160,4 @@ void report_error(int err, const char *verb_name) {
   printf("error: %s. errno: %d.", verb_name, err);
 }
 
-int exchange_data(struct rdma_conn *conn) {
-  int ret = -1;
-  ret = post_recv(conn, conn->recv_buf, 12, 0);
-  if (ret != 0) {
-    report_error(errno, "client_exchange_rkey 1");
-    return ret;
-  }
-  *(uint32_t *)conn->send_buf = conn->mr_recv->rkey;
-  *(uint64_t *)(conn->send_buf + 4) = (uint64_t) conn->recv_buf;
-  ret = post_send(conn, conn->send_buf, 12, 0);
-  if (ret != 0) {
-    report_error(errno, "client_exchange_rkey 2");
-    return ret;
-  }
-  struct ibv_wc wc;
-  for (int i = 0; i < 2; ++i) {
-    ret = await_completion(conn, &wc);
-    if (ret != 1 || wc.status != IBV_WC_SUCCESS) {
-      report_error(errno, "client_exchange_rkey 3");
-      return -1;
-    }
-    if (wc.opcode == IBV_WC_RECV) {
-      printf("get recv compelete\n");
-      conn->remote_rkey = *(uint32_t *)conn->recv_buf;
-      conn->remote_addr = *(uint64_t *) (conn->recv_buf + 4);
-      memset(conn->recv_buf, 0, conn->recv_len);
-    }
-    if (wc.opcode == IBV_WC_SEND) {
-      printf("get send compelete\n");
-    }
-  }
-  return 0;
-}
+

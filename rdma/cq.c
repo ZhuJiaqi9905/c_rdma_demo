@@ -1,4 +1,4 @@
-#include "rdma_common.h"
+#include "rdma_conn.h"
 
 int create_cq(struct rdma_conn *conn, int cqe) {
   int ret = 0;

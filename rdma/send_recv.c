@@ -1,4 +1,4 @@
-#include "rdma_common.h"
+#include "rdma_conn.h"
 #include <infiniband/verbs.h>
 int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
               uint64_t wr_id) {
@@ -6,7 +6,7 @@ int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
 
   sge.addr = (uint64_t)addr;
   sge.length = length;
-  sge.lkey = conn->mr_send->lkey;
+  sge.lkey = conn->mr->lkey;
   struct ibv_send_wr wr;
   struct ibv_send_wr *bad_wr;
 
@@ -32,7 +32,7 @@ int post_recv(struct rdma_conn *conn, void *addr, uint32_t length,
   struct ibv_sge sge;
   sge.addr = (uint64_t) addr;
   sge.length =  length;
-  sge.lkey = conn->mr_recv->lkey;
+  sge.lkey = conn->mr->lkey;
   struct ibv_recv_wr wr;
   struct ibv_recv_wr *bad;
   wr.wr_id = wr_id;

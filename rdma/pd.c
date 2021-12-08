@@ -1,4 +1,4 @@
-#include "rdma_common.h"
+#include "rdma_conn.h"
 
 int alloc_pd(struct rdma_conn *conn) {
   int ret = 0;

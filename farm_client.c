@@ -1,3 +1,4 @@
+#include "farm/farm.h"
 #include "rdma/rdma_conn.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,10 +9,10 @@ int main() {
   char server_ip[] = "10.0.12.25";
   char server_port[] = "7900";
   int cqe = 10;
-  int region_len = 65536;
+  int region_len = 4096;
 
   struct rdma_conn *conn = new_rdma_conn(region_len);
-  
+
   if (conn == NULL) {
     goto out0;
   }
@@ -51,53 +52,40 @@ int main() {
   }
   // connected
   printf("connected\n");
-  printf("my rkey is %d, addr is %ld\n", conn->mr->rkey,
-         (uint64_t)conn->recv_buf);
-  exchange_data(conn);
-  printf("remote_rkey is %d, remote addr is %ld\n", conn->remote_rkey,
-         conn->remote_addr);
-  struct ibv_wc wc;
+  struct farm_sender *sender = new_sender(conn, 4092);
+
+  int data_len = 7000;
+  uint8_t *data = (uint8_t *)malloc(data_len);
+  printf("start send\n");
   struct timeval t_start;
   struct timeval t_end;
   struct timeval t_result;
   gettimeofday(&t_start, NULL);
-  for (int i = 0; i < 10; ++i) {
-    memset(conn->send_buf, i, conn->send_len);
-    if (post_write(conn, conn->send_buf, 16, conn->remote_addr, i) != 0) {
-      goto out7;
+  int s = 0;
+  while (s < data_len) {
+    int res = farm_write(sender, data, data_len);
+    if (res != 0) {
+      printf("write %d bytes", res);
     }
-    if (await_completion(conn, &wc) != 1) {
-      goto out7;
-    }
-    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_RDMA_WRITE) {
-      goto out7;
-    }
-    printf("write %d\n", i);
+    s += res;
   }
-  // for (int i = 0; i < num; ++i) {
-  //   if (post_send(conn, send_buf, buf_len, 0) != 0) {
-  //     goto out7;
-  //   }
-  //   if (await_completion(conn, &wc) != 1) {
-  //     goto out7;
-  //   }
-  //   if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_SEND) {
-  //     goto out7;
-  //   }
-  // }
   gettimeofday(&t_end, NULL);
   timersub(&t_end, &t_start, &t_result);
+  printf("write finish\n");
+
   double duration = t_result.tv_sec + (1.0 * t_result.tv_usec) / 1000000;
-  double size = 1.0 * num * region_len / (1024 * 1024);
+  double size = data_len;
   double throughput = size / duration;
   printf("duration: %lfs, size: %lfMB, throuthput: %lfMB/s", duration, size,
          throughput);
   // disconnected
   if (client_disconnect(conn) != 0) {
-    goto out7;
+    goto out8;
   }
   printf("disconnect\n");
   ret = EXIT_SUCCESS;
+out8:
+  drop_sender(sender);
 out7:
   deregister_mr(conn);
 out6:
@@ -113,5 +101,6 @@ out2:
 out1:
   drop_rdma_conn(conn);
 out0:
+  free(data);
   exit(ret);
 }

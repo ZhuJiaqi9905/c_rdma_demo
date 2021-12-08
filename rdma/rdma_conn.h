@@ -1,5 +1,5 @@
-#ifndef C_RDMA_DEMO_RDMA_COMMON_H
-#define C_RDMA_DEMO_RDMA_COMMON_H
+#ifndef RDMA_CONN_RDMA_CONN_H
+#define RDMA_CONN_RDMA_CONN_H
 #include <rdma/rdma_cma.h>
 #include <rdma/rdma_verbs.h>
 #include <stdint.h>
@@ -12,17 +12,13 @@ struct rdma_conn {
   struct ibv_pd *pd;
   struct ibv_cq *cq;
   struct ibv_qp *qp;
-  struct ibv_mr *mr_send;
-  struct ibv_mr *mr_recv;
+  struct ibv_mr *mr;
+  uint8_t *region;
+  int region_len;
   uint32_t remote_rkey;
-  uint8_t *send_buf;
-  uint8_t *recv_buf;
-  uint32_t send_len;
-  uint32_t recv_len;
-  uint64_t remote_addr;
 };
-struct rdma_conn *create_rdma_conn();
-void destroy_rdma_conn(struct rdma_conn *conn);
+struct rdma_conn *new_rdma_conn(int region_len);
+void drop_rdma_conn(struct rdma_conn *conn);
 
 // event channel
 int create_event_channel(struct rdma_conn *conn);
@@ -41,7 +37,6 @@ int client_connect(struct rdma_conn *conn);
 int server_accept(struct rdma_conn *conn);
 int client_disconnect(struct rdma_conn *conn);
 void report_error(int err, const char *verb_name);
-int exchange_data(struct rdma_conn *conn);
 // cq
 int create_cq(struct rdma_conn *conn, int cqe);
 int destroy_cq(struct rdma_conn *conn);
@@ -52,9 +47,7 @@ int alloc_pd(struct rdma_conn *conn);
 int dealloc_pd(struct rdma_conn *conn);
 
 // mr
-int register_mr(struct rdma_conn *conn, void *addr_send, size_t length_send,
-                enum ibv_access_flags access_send, void *addr_recv,
-                size_t length_recv, enum ibv_access_flags access_recv);
+int register_mr(struct rdma_conn *conn, enum ibv_access_flags access_flag);
 int deregister_mr(struct rdma_conn *conn);
 // qp
 int create_qp(struct rdma_conn *conn, int sq_sig_all, uint32_t max_send_wr,

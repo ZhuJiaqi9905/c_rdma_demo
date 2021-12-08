@@ -1,4 +1,4 @@
-#include "rdma_common.h"
+#include "rdma_conn.h"
 int create_event_channel(struct rdma_conn *conn) {
   conn->event_channel = rdma_create_event_channel();
   int ret = 0;
