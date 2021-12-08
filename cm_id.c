@@ -162,14 +162,14 @@ void report_error(int err, const char *verb_name) {
 
 int exchange_data(struct rdma_conn *conn) {
   int ret = -1;
-  ret = post_recv(conn, conn->recv_buf, sizeof(uint32_t), 0);
+  ret = post_recv(conn, conn->recv_buf, 12, 0);
   if (ret != 0) {
     report_error(errno, "client_exchange_rkey 1");
     return ret;
   }
   *(uint32_t *)conn->send_buf = conn->mr_recv->rkey;
   *(uint64_t *)(conn->send_buf + 4) = (uint64_t) conn->recv_buf;
-  ret = post_send(conn, conn->send_buf, sizeof(uint32_t), 0);
+  ret = post_send(conn, conn->send_buf, 12, 0);
   if (ret != 0) {
     report_error(errno, "client_exchange_rkey 2");
     return ret;
@@ -185,6 +185,7 @@ int exchange_data(struct rdma_conn *conn) {
       printf("get recv compelete\n");
       conn->remote_rkey = *(uint32_t *)conn->recv_buf;
       conn->remote_addr = *(uint64_t *) (conn->recv_buf + 4);
+      memset(conn->recv_buf, 0, conn->recv_len);
     }
     if (wc.opcode == IBV_WC_SEND) {
       printf("get send compelete\n");

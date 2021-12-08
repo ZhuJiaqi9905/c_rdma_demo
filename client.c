@@ -55,14 +55,28 @@ int main() {
   }
   // connected
   printf("connected\n");
-  printf("my rkey is %d, addr is %ld\n", conn->mr_recv->rkey, (uint64_t)conn->recv_buf);
+  printf("my rkey is %d, addr is %ld\n", conn->mr_recv->rkey,
+         (uint64_t)conn->recv_buf);
   exchange_data(conn);
-  printf("remote_rkey is %d, remote addr is %ld\n", conn->remote_rkey, conn->remote_addr);
+  printf("remote_rkey is %d, remote addr is %ld\n", conn->remote_rkey,
+         conn->remote_addr);
   struct ibv_wc wc;
   struct timeval t_start;
   struct timeval t_end;
   struct timeval t_result;
   gettimeofday(&t_start, NULL);
+  for (int i = 0; i < 10; ++i) {
+    memset(conn->send_buf, i, conn->send_len);
+    if (post_write(conn, conn->remote_addr, 16, conn->remote_addr, i) != 0) {
+      goto out7;
+    }
+    if (await_completion(conn, &wc) != 1) {
+      goto out7;
+    }
+    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_RDMA_WRITE) {
+      goto out7;
+    }
+  }
   // for (int i = 0; i < num; ++i) {
   //   if (post_send(conn, send_buf, buf_len, 0) != 0) {
   //     goto out7;

@@ -8,11 +8,12 @@ all: $(EXECUTABLES)
 
 client: client.o cm_id.o cq.o event_channel.o \
 		mr.o pd.o qp.o rdma_conn.o \
-		send_recv.o
+		send_recv.o read_write.o
+
 
 server: server.o cm_id.o cq.o event_channel.o \
 		mr.o pd.o qp.o rdma_conn.o \
-		send_recv.o 
+		send_recv.o read_write.o
 
 client.o: client.c rdma_common.h
 
@@ -34,6 +35,7 @@ rdma_conn.o: rdma_conn.c rdma_common.h
 
 send_recv.o: send_recv.c rdma_common.h
 
+read_write.o: read_write.c rdma_common.h
 .PHONY: all clean cleanall
 
 clean:

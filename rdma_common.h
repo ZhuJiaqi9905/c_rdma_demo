@@ -67,8 +67,8 @@ int post_send(struct rdma_conn *conn, void *addr, uint32_t length,
 int post_recv(struct rdma_conn *conn, void *addr, uint32_t length,
               uint64_t wr_id);
 int post_read(struct rdma_conn *conn, void *addr, uint32_t length,
-              void *remote_addr, uint64_t wr_id);
+              uint64_t remote_addr, uint64_t wr_id);
 int post_write(struct rdma_conn *conn, void *addr, uint32_t length,
-               void *remote_addr, uint64_t wr_id);
+               uint64_t remote_addr, uint64_t wr_id);
 
 #endif

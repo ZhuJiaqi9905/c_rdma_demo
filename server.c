@@ -3,6 +3,20 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
+static void test_rw(struct rdma_conn *conn) {
+  uint8_t last_res = 0;
+  uint8_t res = 0;
+  while (1) {
+    res = conn->recv_buf[0];
+    if (res != last_res) {
+      last_res = res;
+      printf("read: %c\n", res);
+    }
+    if (res == 10) {
+      break;
+    }
+  }
+}
 static int connect_and_operate(struct rdma_cm_id *id) {
   int num = 20;
   int cqe = 10;
@@ -54,16 +68,20 @@ static int connect_and_operate(struct rdma_cm_id *id) {
   printf("accept\n");
   // connected
   printf("connected\n");
-  printf("my rkey is %d, my addr is %ld\n", conn->mr_recv->rkey, (uint64_t)conn->recv_buf);
-  exchange_data(conn); 
-  printf("remote rkey is %d, remote addr is %ld\n", conn->remote_rkey, conn->remote_addr);
+  printf("my rkey is %d, my addr is %ld\n", conn->mr_recv->rkey,
+         (uint64_t)conn->recv_buf);
+  exchange_data(conn);
+  printf("remote rkey is %d, remote addr is %ld\n", conn->remote_rkey,
+         conn->remote_addr);
   struct ibv_wc wc;
   struct timeval t_start;
   struct timeval t_end;
   struct timeval t_result;
-  for (int i = 0; i < 5; ++i) {
-    post_recv(conn, recv_buf, buf_len, 0);
-  }
+  gettimeofday(&t_start, NULL);
+  test_rw(conn);
+  // for (int i = 0; i < 5; ++i) {
+  //   post_recv(conn, recv_buf, buf_len, 0);
+  // }
   // for (int i = 0; i < num; ++i) {
   //   printf("post_recv %d\n", i);
   //   if (i == 0) {
