@@ -19,6 +19,7 @@ struct rdma_conn {
   void *recv_buf;
   uint32_t send_len;
   uint32_t recv_len;
+  uint64_t remote_addr;
 };
 struct rdma_conn *create_rdma_conn();
 void destroy_rdma_conn(struct rdma_conn *conn);
@@ -40,7 +41,7 @@ int client_connect(struct rdma_conn *conn);
 int server_accept(struct rdma_conn *conn);
 int client_disconnect(struct rdma_conn *conn);
 void report_error(int err, const char *verb_name);
-int exchange_rkey(struct rdma_conn *conn);
+int exchange_data(struct rdma_conn *conn);
 // cq
 int create_cq(struct rdma_conn *conn, int cqe);
 int destroy_cq(struct rdma_conn *conn);

@@ -160,29 +160,34 @@ void report_error(int err, const char *verb_name) {
   printf("error: %s. errno: %d.", verb_name, err);
 }
 
-int exchange_rkey(struct rdma_conn *conn) {
-
+int exchange_data(struct rdma_conn *conn) {
   int ret = -1;
   ret = post_recv(conn, conn->recv_buf, sizeof(uint32_t), 0);
   if (ret != 0) {
-    report_error(errno, "client_exchange_rkey");
+    report_error(errno, "client_exchange_rkey 1");
     return ret;
   }
-  *(uint32_t *)conn->mr_send->addr = conn->mr_recv->rkey;
-  ret = post_send(conn, conn->mr_send, sizeof(uint32_t));
+  *(uint32_t *)conn->send_buf = conn->mr_recv->rkey;
+  *(uint64_t *)(conn->send_buf + 4) = (uint64_t) conn->recv_buf;
+  ret = post_send(conn, conn->send_buf, sizeof(uint32_t), 0);
   if (ret != 0) {
-    report_error(errno, "client_exchange_rkey");
+    report_error(errno, "client_exchange_rkey 2");
     return ret;
   }
   struct ibv_wc wc;
   for (int i = 0; i < 2; ++i) {
     ret = await_completion(conn, &wc);
     if (ret != 1 || wc.status != IBV_WC_SUCCESS) {
-      report_error(errno, "client_exchange_rkey");
+      report_error(errno, "client_exchange_rkey 3");
       return -1;
     }
     if (wc.opcode == IBV_WC_RECV) {
+      printf("get recv compelete\n");
       conn->remote_rkey = *(uint32_t *)conn->recv_buf;
+      conn->remote_addr = *(uint64_t *) (conn->recv_buf + 4);
+    }
+    if (wc.opcode == IBV_WC_SEND) {
+      printf("get send compelete\n");
     }
   }
   return 0;

@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 static int connect_and_operate(struct rdma_cm_id *id) {
-  int num = 2000;
+  int num = 20;
   int cqe = 10;
   int buf_len = 65536;
   uint8_t *send_buf = (uint8_t *)malloc(buf_len);
@@ -47,35 +47,36 @@ static int connect_and_operate(struct rdma_cm_id *id) {
     goto out6;
   }
   printf("register mr\n");
-  for (int i = 0; i < 10; ++i) {
-    post_recv(conn, recv_buf, buf_len, 0);
-  }
+
   if (server_accept(conn) != 0) {
     goto out7;
   }
   printf("accept\n");
   // connected
   printf("connected\n");
-  printf("my rkey is %d\n", conn->mr_recv->rkey);
-  exchange_rkey(conn);
-  printf("received rkey is %d\n", conn->remote_rkey);
+  printf("my rkey is %d, my addr is %ld\n", conn->mr_recv->rkey, (uint64_t)conn->recv_buf);
+  exchange_data(conn); 
+  printf("remote rkey is %d, remote addr is %ld\n", conn->remote_rkey, conn->remote_addr);
   struct ibv_wc wc;
   struct timeval t_start;
   struct timeval t_end;
   struct timeval t_result;
-
-  for (int i = 0; i < num; ++i) {
-    if (i == 0) {
-      gettimeofday(&t_start, NULL);
-    }
-    if (await_completion(conn, &wc) != 1) {
-      goto out7;
-    }
-    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_RECV) {
-      goto out7;
-    }
+  for (int i = 0; i < 5; ++i) {
     post_recv(conn, recv_buf, buf_len, 0);
   }
+  // for (int i = 0; i < num; ++i) {
+  //   printf("post_recv %d\n", i);
+  //   if (i == 0) {
+  //     gettimeofday(&t_start, NULL);
+  //   }
+  //   if (await_completion(conn, &wc) != 1) {
+  //     goto out7;
+  //   }
+  //   if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_RECV) {
+  //     goto out7;
+  //   }
+  //   post_recv(conn, recv_buf, buf_len, 0);
+  // }
   gettimeofday(&t_end, NULL);
   timersub(&t_end, &t_start, &t_result);
   double duration = t_result.tv_sec + (1.0 * t_result.tv_usec) / 1000000;

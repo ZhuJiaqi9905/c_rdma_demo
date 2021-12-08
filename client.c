@@ -55,25 +55,25 @@ int main() {
   }
   // connected
   printf("connected\n");
-  printf("my rkey is %d\n", conn->mr_recv->rkey);
-  exchange_rkey(conn);
-  printf("received rkey is %d\n", conn->remote_rkey);
+  printf("my rkey is %d, addr is %ld\n", conn->mr_recv->rkey, (uint64_t)conn->recv_buf);
+  exchange_data(conn);
+  printf("remote_rkey is %d, remote addr is %ld\n", conn->remote_rkey, conn->remote_addr);
   struct ibv_wc wc;
   struct timeval t_start;
   struct timeval t_end;
   struct timeval t_result;
   gettimeofday(&t_start, NULL);
-  for (int i = 0; i < num; ++i) {
-    if (post_send(conn, send_buf, buf_len, 0) != 0) {
-      goto out7;
-    }
-    if (await_completion(conn, &wc) != 1) {
-      goto out7;
-    }
-    if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_SEND) {
-      goto out7;
-    }
-  }
+  // for (int i = 0; i < num; ++i) {
+  //   if (post_send(conn, send_buf, buf_len, 0) != 0) {
+  //     goto out7;
+  //   }
+  //   if (await_completion(conn, &wc) != 1) {
+  //     goto out7;
+  //   }
+  //   if (wc.status != IBV_WC_SUCCESS || wc.opcode != IBV_WC_SEND) {
+  //     goto out7;
+  //   }
+  // }
   gettimeofday(&t_end, NULL);
   timersub(&t_end, &t_start, &t_result);
   double duration = t_result.tv_sec + (1.0 * t_result.tv_usec) / 1000000;
