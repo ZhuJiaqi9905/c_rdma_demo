@@ -65,7 +65,7 @@ static int connect_and_operate(struct rdma_cm_id *id) {
     while (rlen == 0) {
       rlen = farm_read(recver, buf, buf_len);
       // asm("nop");
-      usleep(1);
+      // usleep(1);
     }
     printf("read %d bytes\n", rlen);
   }

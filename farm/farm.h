@@ -20,7 +20,7 @@ void drop_sender(struct farm_sender *self);
 
 struct farm_recver {
   struct rdma_conn *conn;
-  uint8_t *recv_buf;
+  volatile uint8_t *recv_buf;
   int recv_buf_len;
   uint64_t remote_head_copy_addr;
   int32_t *head_pos_buf;

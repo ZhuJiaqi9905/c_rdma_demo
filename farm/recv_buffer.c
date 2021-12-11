@@ -57,10 +57,10 @@ static int exchange_metadata(struct farm_recver *self, const uint8_t *my_addr) {
 }
 int farm_read(struct farm_recver *self, uint8_t *buf, int buf_len) {
   int data_len = *(int32_t *)(&self->recv_buf[self->head]);
-  *(int32_t *)(&self->recv_buf[self->head]) = 0;
   if (data_len == 0) {
     return 0;
   }
+    *(int32_t *)(&self->recv_buf[self->head]) = 0;
   int msg_len = floor8(data_len + 4);
   printf("[ recver ] head: %d, ", self->head);
   self->head = (self->head + 4) % self->recv_buf_len;
